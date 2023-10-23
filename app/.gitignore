@@ -1,6 +1,7 @@
-
+###> Project root ###
+./.idea/
+###> Project root ###
 ###> symfony/framework-bundle ###
-/.idea/
 /.env.local
 /.env.local.php
 /.env.*.local
