@@ -53,26 +53,27 @@ class MailController extends AbstractController
 
     #[Route(path: 'mail/{id}/archive', name: 'app_mail_archive', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     #[IsGranted('archive', 'mail')]
-    public function archive(Request $request, ): Response
+    public function archive(Request $request, Mail $mail, EntityManagerInterface $entityManager): Response
     {
+        $mail->setArchived(true);
+        $entityManager->persist($mail);
+        $entityManager->flush();
 
-        return $this->render('mail/index.html.twig', [
-            'controller_name' => 'MailController',
-        ]);
+        $this->addFlash('success', 'Mail successfully archived !');
 
-
+        return $this->redirectToRoute('app_mail_list');
     }
 
     #[Route(path: 'mail/{id}/delete', name: 'app_mail_delete', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     #[IsGranted('delete', 'mail')]
-    public function delete(Request $request): Response
+    public function delete(Request $request, Mail $mail, EntityManagerInterface $entityManager): Response
     {
+        $entityManager->remove($mail);
+        $entityManager->flush();
 
-        return $this->render('mail/index.html.twig', [
-            'controller_name' => 'MailController',
-        ]);
+        $this->addFlash('success', 'Mail successfully deleted !');
 
-
+        return $this->redirectToRoute('app_mail_list');
     }
 
     #[Route(path: 'mail/list', name: 'app_mail_list', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
