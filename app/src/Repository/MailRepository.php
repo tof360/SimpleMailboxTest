@@ -4,9 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Mail;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -23,32 +20,6 @@ class MailRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Mail::class);
     }
-
-//    /**
-//     * @return Mail[] Returns an array of Mail objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->andWhere('m.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('m.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Mail
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->andWhere('m.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
-
     public function findByUser($id): ?array
     {
         return $this->createQueryBuilder('m')
@@ -59,7 +30,6 @@ class MailRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-
     public function findUnreadByUser($id): ?int
     {
         return $this->createQueryBuilder('m')
