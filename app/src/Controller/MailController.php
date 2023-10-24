@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Mail;
+use App\Event\MailEvent;
 use App\Form\MailType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -44,8 +46,18 @@ class MailController extends AbstractController
 
     #[Route(path: 'mail/{id}/show', name: 'app_mail_show', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     #[IsGranted('view', 'mail')]
-    public function show(Mail $mail): Response
+    public function show(Mail $mail, EntityManagerInterface $entityManager): Response
     {
+        $user = $this->getUser();
+
+        //@TODO Better to do that with event and listener and there is a problem because if there are multiple receivers the isRead attribute
+        //@TODO should be on the association and not on the mail entity (which is possible to do)
+        if($mail->getSendTo()->contains($user)){
+            $mail->setRead(true);
+            $entityManager->persist($mail);
+            $entityManager->flush();
+        }
+
         return $this->render('mail/view.html.twig', [
             'mail' => $mail,
         ]);
