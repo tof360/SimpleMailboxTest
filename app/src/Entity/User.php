@@ -37,6 +37,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Mail::class, mappedBy: 'sendTo')]
     private Collection $mails;
 
+    #[ORM\OneToOne(mappedBy: 'isFrom', cascade: ['persist', 'remove'])]
+    private ?Mail $mail = null;
+
     public function __construct()
     {
         $this->mails = new ArrayCollection();
@@ -149,4 +152,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+    public function getMail(): ?Mail
+    {
+        return $this->mail;
+    }
+
+    public function setMail(Mail $mail): static
+    {
+        // set the owning side of the relation if necessary
+        if ($mail->getIsFrom() !== $this) {
+            $mail->setIsFrom($this);
+        }
+
+        $this->mail = $mail;
+
+        return $this;
+    }
+
 }
