@@ -2,15 +2,20 @@
 
 namespace App\Entity;
 
+use App\Entity\Interfaces\MailInterface;
+use App\Entity\Traits\DraftTrait;
 use App\Repository\MailRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: MailRepository::class)]
-class Mail
+class Mail implements MailInterface
 {
+    use TimestampableEntity;
+    use DraftTrait;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -22,15 +27,6 @@ class Mail
 
     #[ORM\Column(length: 255)]
     private ?string $subject = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $created = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $updated = null;
-
-    #[ORM\Column]
-    private ?bool $draft = null;
 
     #[ORM\Column]
     private ?bool $archived = null;
@@ -56,7 +52,7 @@ class Mail
         return $this->isFrom;
     }
 
-    public function setIsFrom(User $isFrom): static
+    public function setIsFrom(User $isFrom): self
     {
         $this->isFrom = $isFrom;
 
@@ -68,45 +64,9 @@ class Mail
         return $this->subject;
     }
 
-    public function setSubject(string $subject): static
+    public function setSubject(string $subject): self
     {
         $this->subject = $subject;
-
-        return $this;
-    }
-
-    public function getCreated(): ?\DateTimeInterface
-    {
-        return $this->created;
-    }
-
-    public function setCreated(\DateTimeInterface $created): static
-    {
-        $this->created = $created;
-
-        return $this;
-    }
-
-    public function getUpdated(): ?\DateTimeInterface
-    {
-        return $this->updated;
-    }
-
-    public function setUpdated(?\DateTimeInterface $updated): static
-    {
-        $this->updated = $updated;
-
-        return $this;
-    }
-
-    public function isDraft(): ?bool
-    {
-        return $this->draft;
-    }
-
-    public function setDraft(bool $draft): static
-    {
-        $this->draft = $draft;
 
         return $this;
     }
@@ -116,7 +76,7 @@ class Mail
         return $this->archived;
     }
 
-    public function setArchived(bool $archived): static
+    public function setArchived(bool $archived): self
     {
         $this->archived = $archived;
 
@@ -128,7 +88,7 @@ class Mail
         return $this->body;
     }
 
-    public function setBody(?string $body): static
+    public function setBody(?string $body): self
     {
         $this->body = $body;
 
@@ -143,7 +103,7 @@ class Mail
         return $this->sendTo;
     }
 
-    public function addSendTo(User $sendTo): static
+    public function addSendTo(User $sendTo): self
     {
         if (!$this->sendTo->contains($sendTo)) {
             $this->sendTo->add($sendTo);
@@ -152,7 +112,7 @@ class Mail
         return $this;
     }
 
-    public function removeSendTo(User $sendTo): static
+    public function removeSendTo(User $sendTo): self
     {
         $this->sendTo->removeElement($sendTo);
 
