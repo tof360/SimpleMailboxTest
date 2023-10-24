@@ -7,14 +7,14 @@ use Doctrine\ORM\Mapping as ORM;
 trait DraftTrait
 {
     #[ORM\Column]
-    private ?bool $draft = null;
+    private ?bool $draft = false;
 
     public function isDraft(): ?bool
     {
         return $this->draft;
     }
 
-    public function setDraft(bool $draft): static
+    public function setDraft(bool $draft): self
     {
         $this->draft = $draft;
 
