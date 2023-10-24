@@ -37,12 +37,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Mail::class, mappedBy: 'sendTo')]
     private Collection $mails;
 
-    #[ORM\OneToOne(mappedBy: 'isFrom', cascade: ['persist', 'remove'])]
-    private ?Mail $mail = null;
+    #[ORM\OneToMany(mappedBy: 'isFrom', targetEntity: Mail::class, orphanRemoval: true)]
+    private Collection $writtenMails;
 
     public function __construct()
     {
         $this->mails = new ArrayCollection();
+        $this->writtenMails = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -152,21 +153,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-    public function getMail(): ?Mail
+
+    /**
+     * @return Collection<int, Mail>
+     */
+    public function getWrittenMails(): Collection
     {
-        return $this->mail;
+        return $this->writtenMails;
     }
 
-    public function setMail(Mail $mail): static
+    public function addWrittenMail(Mail $writtenMail): static
     {
-        // set the owning side of the relation if necessary
-        if ($mail->getIsFrom() !== $this) {
-            $mail->setIsFrom($this);
+        if (!$this->writtenMails->contains($writtenMail)) {
+            $this->writtenMails->add($writtenMail);
+            $writtenMail->setIsFrom($this);
         }
-
-        $this->mail = $mail;
 
         return $this;
     }
 
+    public function removeWrittenMail(Mail $writtenMail): static
+    {
+        if ($this->writtenMails->removeElement($writtenMail)) {
+            // set the owning side to null (unless already changed)
+            if ($writtenMail->getIsFrom() === $this) {
+                $writtenMail->setIsFrom(null);
+            }
+        }
+
+        return $this;
+    }
 }

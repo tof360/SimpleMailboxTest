@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Interfaces\MailInterface;
 use App\Entity\Traits\DraftTrait;
+use App\Entity\Traits\ReadTrait;
 use App\Repository\MailRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -15,15 +16,11 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 class Mail implements MailInterface
 {
     use TimestampableEntity;
-    use DraftTrait;
+    use ReadTrait;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
-    #[ORM\OneToOne(inversedBy: 'mail', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $isFrom = null;
 
     #[ORM\Column(length: 255)]
     private ?string $subject = null;
@@ -37,6 +34,10 @@ class Mail implements MailInterface
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'mails')]
     private Collection $sendTo;
 
+    #[ORM\ManyToOne(inversedBy: 'writtenMails')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $isFrom = null;
+
     public function __construct()
     {
         $this->sendTo = new ArrayCollection();
@@ -45,18 +46,6 @@ class Mail implements MailInterface
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getIsFrom(): ?User
-    {
-        return $this->isFrom;
-    }
-
-    public function setIsFrom(User $isFrom): self
-    {
-        $this->isFrom = $isFrom;
-
-        return $this;
     }
 
     public function getSubject(): ?string
@@ -115,6 +104,18 @@ class Mail implements MailInterface
     public function removeSendTo(User $sendTo): self
     {
         $this->sendTo->removeElement($sendTo);
+
+        return $this;
+    }
+
+    public function getIsFrom(): ?User
+    {
+        return $this->isFrom;
+    }
+
+    public function setIsFrom(?User $isFrom): static
+    {
+        $this->isFrom = $isFrom;
 
         return $this;
     }
