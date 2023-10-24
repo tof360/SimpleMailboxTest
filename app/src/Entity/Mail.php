@@ -29,7 +29,7 @@ class Mail implements MailInterface
     private ?string $subject = null;
 
     #[ORM\Column]
-    private ?bool $archived = null;
+    private ?bool $archived = false;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $body = null;
