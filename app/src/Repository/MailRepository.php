@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Mail;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -55,6 +57,19 @@ class MailRepository extends ServiceEntityRepository
             ->setParameter('id', $id)
             ->getQuery()
             ->getResult()
+        ;
+    }
+
+    public function findUnreadByUser($id): ?int
+    {
+        return $this->createQueryBuilder('m')
+            ->select('COUNT(m)')
+            ->andWhere(':id MEMBER OF m.sendTo')
+            ->andWhere('m.archived = 0')
+            ->andWhere('m.isRead = 0')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getSingleScalarResult()
         ;
     }
 }
