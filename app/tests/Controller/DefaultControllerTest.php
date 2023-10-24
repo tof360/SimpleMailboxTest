@@ -12,6 +12,6 @@ class DefaultControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/');
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', 'SimpleMailbox');
+        $this->assertStringContainsString('<a class="navbar-brand" href="/">SimpleMailbox</a>', $client->getResponse()->getContent());
     }
 }
