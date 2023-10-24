@@ -15,10 +15,13 @@ class MailVoter extends Voter
     // these strings are just invented: you can use anything
     const VIEW = 'view';
     const EDIT = 'edit';
+    const NEW = 'new';
+    const ARCHIVE = 'archive';
+    const DELETE = 'delete';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::VIEW, self::EDIT])) {
+        if (!in_array($attribute, [self::VIEW, self::EDIT, self::NEW, self::ARCHIVE, self::DELETE ])) {
             return false;
         }
 
@@ -38,15 +41,31 @@ class MailVoter extends Voter
             return false;
         }
 
-        // you know $subject is a Post object, thanks to `supports()`
         /** @var Mail $mail */
         $mail = $subject;
 
         return match($attribute) {
             self::VIEW => $this->canView($mail, $user),
             self::EDIT => $this->canEdit($mail, $user),
+            self::NEW => $this->canCreate($user),
+            self::ARCHIVE => $this->canArchive($mail, $user),
+            self::DELETE => $this->canDelete($mail, $user),
             default => throw new \LogicException('This code should not be reached!')
         };
+    }
+
+    private function canCreate(User $user): bool
+    {
+        return true;
+    }
+    private function canArchive(Mail $mail, User $user): bool
+    {
+        return true;
+    }
+
+    private function canDelete(Mail $mail, User $user): bool
+    {
+        return true;
     }
 
     private function canView(Mail $mail, User $user): bool
