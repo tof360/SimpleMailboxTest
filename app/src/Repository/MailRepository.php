@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Mail;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -45,4 +46,15 @@ class MailRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    public function findByUser($id): ?array
+    {
+        return $this->createQueryBuilder('m')
+            ->andWhere(':id MEMBER OF m.sendTo')
+            ->andWhere('m.archived = 0')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

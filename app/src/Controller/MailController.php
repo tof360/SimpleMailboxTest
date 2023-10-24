@@ -44,7 +44,7 @@ class MailController extends AbstractController
 
     #[Route(path: 'mail/{id}/show', name: 'app_mail_show', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     #[IsGranted('view', 'mail')]
-    public function show(Request $request, Mail $mail): Response
+    public function show(Mail $mail): Response
     {
         return $this->render('mail/view.html.twig', [
             'mail' => $mail,
@@ -53,7 +53,7 @@ class MailController extends AbstractController
 
     #[Route(path: 'mail/{id}/archive', name: 'app_mail_archive', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     #[IsGranted('archive', 'mail')]
-    public function archive(Request $request, Mail $mail, EntityManagerInterface $entityManager): Response
+    public function archive(Mail $mail, EntityManagerInterface $entityManager): Response
     {
         $mail->setArchived(true);
         $entityManager->persist($mail);
@@ -66,7 +66,7 @@ class MailController extends AbstractController
 
     #[Route(path: 'mail/{id}/delete', name: 'app_mail_delete', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     #[IsGranted('delete', 'mail')]
-    public function delete(Request $request, Mail $mail, EntityManagerInterface $entityManager): Response
+    public function delete(Mail $mail, EntityManagerInterface $entityManager): Response
     {
         $entityManager->remove($mail);
         $entityManager->flush();
@@ -77,14 +77,14 @@ class MailController extends AbstractController
     }
 
     #[Route(path: 'mail/list', name: 'app_mail_list', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    #[IsGranted('list', 'mail')]
-    public function list(Request $request): Response
+    public function list(EntityManagerInterface $entityManager): Response
     {
+        $user = $this->getUser();
 
-        return $this->render('mail/index.html.twig', [
-            'controller_name' => 'MailController',
+        $userMails = $entityManager->getRepository(Mail::class)->findByUser($user->getId());
+
+        return $this->render('mail/list.html.twig', [
+            'user_mails' => $userMails,
         ]);
-
-
     }
 }
