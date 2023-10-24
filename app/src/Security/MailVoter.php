@@ -82,6 +82,6 @@ class MailVoter extends Voter
     private function canEdit(Mail $mail, User $user): bool
     {
         // this assumes that the Post object has a `getOwner()` method
-        return $user === $mail->getOwner();
+        return $user === $mail->getIsFrom();
     }
 }

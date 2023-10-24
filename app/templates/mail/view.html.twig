@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New mail{% endblock %}
+
+{% block body %}
+
+    <h3>Subject : "{{ mail.subject }}"</h3>
+    <hr>
+    <h3>De : {{ mail.isFrom.email }} </h3>
+    <hr>
+    <h3>À :</h3>
+    <ul>
+        {% for user in mail.sendTo %}
+            <li>{{ user.email|e }}</li>
+        {% endfor %}
+    </ul>
+    <hr>
+    <h3>Content :</h3>
+    <div>
+        {{ mail.body }}
+    </div>
+{% endblock %}

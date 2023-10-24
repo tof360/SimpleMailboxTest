@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 
 class MailController extends AbstractController
 {
@@ -45,14 +44,11 @@ class MailController extends AbstractController
 
     #[Route(path: 'mail/{id}/show', name: 'app_mail_show', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     #[IsGranted('view', 'mail')]
-    public function show(Request $request, ): Response
+    public function show(Request $request, Mail $mail): Response
     {
-
-        return $this->render('mail/index.html.twig', [
-            'controller_name' => 'MailController',
+        return $this->render('mail/view.html.twig', [
+            'mail' => $mail,
         ]);
-
-
     }
 
     #[Route(path: 'mail/{id}/archive', name: 'app_mail_archive', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
