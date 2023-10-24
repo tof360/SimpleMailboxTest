@@ -44,7 +44,7 @@ class RegistrationFormType extends AbstractType
                         'max' => 4096,
                     ]),
                     new Regex([
-                        'pattern' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*?[0-9])(?=.*\W).{8,}$/',
+                        'pattern' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*?[0-9])(?=.*[\(\)\@\#\_\-\,]).{8,}$/',
                         'message' => 'Your password should contains at least one uppercase letter, one lowercase letter, one number and one special character',
                     ]),
                 ]
